@@ -1,4 +1,5 @@
-#include <GL/freeglut_std.h>
+
+#include<GL/freeglut_std.h>
 //#include <GL/glut.h>
 #include <stdio.h>
 #include <array>
@@ -59,8 +60,32 @@ int MONEY = 0;
 int FIELD_LENGTH = 150;
 int FIELD_WIDTH = 100;
 
+unsigned char a_plough[] = "Plough";
+unsigned char a_water[] = "Water";
+unsigned char a_harvest[] = "Harvest";
+unsigned char a_seed[] = "Seed";
+
+
+unsigned char p_carrot[] = "Carrot";
+unsigned char p_blueberry[] = "Blueberry";
+unsigned char p_onion[] = "Onion";
+
+
+struct manager
+{
+int carrot_cost;
+int blueberry_cost;
+int onion_cost;
+
+int carrot_seeds;
+int blueberry_seeds;
+int onion_seeds;
+
+} GameManager;
 
 #pragma endregion
+
+
 
 #pragma region CLASS_DEFS
 
@@ -414,7 +439,7 @@ void drawBlueberry(int x, int y, int stage)
     switch (stage)
     {
     case 0:
-    y-=5;
+        y-=5;
         glColor3f(0.882f, 0.741f, 0.345f);
         glPointSize(3.0f);
         glBegin(GL_POINTS);
@@ -608,15 +633,203 @@ void drawHouse()
 
 void drawTool(int x, int y)
 {
+    int _x = 70;
+    int _y = 627;
+    glColor3f(1.0,1.0,1.0);
+    glBegin(GL_LINE_LOOP);
+    glVertex2i(40,750);
+    glVertex2i(40,690);
+    glVertex2i(100,690);
+    glVertex2i(100,750);
+    glEnd();
+
+    glBegin(GL_LINE_LOOP);
+    glVertex2i(40,670);
+    glVertex2i(40,610);
+    glVertex2i(100,610);
+    glVertex2i(100,670);
+    glEnd();
+
+    glRasterPos2i(110, 715);
+
+  switch (SELECTED_ACTION)
+  {
+  case WATER:
+    glColor3f(0.25f, 0.258f, 0.277f);
+    glBegin(GL_POLYGON);
+    glVertex2i(x+15,y);
+    glVertex2i(x+35,y);
+    glVertex2i(x+45,y+30);
+    glVertex2i(x+5,y+30);
+    glEnd();
+    glColor3f(0.109f, 0.62f, 0.89f);
+   
+    glBegin(GL_POLYGON);
+    glVertex2i(x+45,y+28);
+    glVertex2i(x+5,y+28);
+    glVertex2i(x+9,y+25);
+    glVertex2i(x+41,y+25);
+    glEnd();
+    glColor3f(1.0f,1.0f,1.0f);
+    for(int i = 0; i<5;i++)
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, a_water[i]);
+
+      break;
+
+  case TILL:
+    glColor3f(0.525f, 0.286f, 0.184f);
     glBegin(GL_LINES);
     glVertex2i(x,y);
     glVertex2i(x+40,y+40);
     glEnd();
+    glColor3f(0.25f, 0.258f, 0.277f);
     glBegin(GL_POLYGON);
     glVertex2i(x+40,y+40);
     glVertex2i(x+35,y+30);
     glVertex2i(x+45,y+25);
     glEnd();
+    glColor3f(1.0f,1.0f,1.0f);
+    for(int i = 0; i<6;i++)
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, a_plough[i]);
+
+  break;
+
+  case PLANT:
+        x+=23;
+        y-=5;
+        glColor3f(0.882f, 0.741f, 0.345f);
+        glPointSize(3.0f);
+        glBegin(GL_POINTS);
+        glVertex2i(x,y+22);
+        glVertex2i(x-3,y+19);
+        glVertex2i(x+4,y+30);
+        glVertex2i(x-5,y+32);
+        glEnd();
+            glColor3f(1.0f,1.0f,1.0f);
+    for(int i = 0; i<5;i++)
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, a_seed[i]);
+  break;
+
+  case HARVEST:
+    glColor3f(0.525f, 0.286f, 0.184f);
+    glLineWidth(6.0f);
+    glBegin(GL_LINES);
+    glVertex2i(x,y);
+    glVertex2i(x+20,y+20);
+    glEnd();
+
+    glColor3f(0.25f, 0.258f, 0.277f);
+    glBegin(GL_LINE_STRIP);
+    glVertex2i(x+20,y+20);
+    glVertex2i(x+13,y+30);
+    glVertex2i(x+20,y+40);
+    glVertex2i(x+35,y+40);
+    glEnd();
+    glColor3f(1.0f,1.0f,1.0f);
+    for(int i = 0; i<7;i++)
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, a_harvest[i]);
+  break;
+  }
+    
+    glRasterPos2i(110, 635);
+
+    switch (SELECTED_PLANT)
+    {
+    case ONION:
+        _y+=10;
+            glColor3f(1.0f,1.0f,1.0f);
+        for(int i = 0; i<5;i++)
+        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, p_onion[i]);
+        glLineWidth(5.0f);
+        glBegin(GL_LINES);
+        glColor3f(0.2f, 0.275f, 0.208f);
+        glVertex2i(_x+2.5,_y+7);
+        glVertex2i(_x+12.5,_y+10);
+        glVertex2i(_x-1.5,_y+3);
+        glVertex2i(_x-7.5,_y+9);
+        glColor3f(0.949f, 0.839f, 0.906f);
+        glVertex2i(_x,_y);
+        glColor3f(0.422f, 0.576f, 0.439f);
+        glVertex2i(_x,_y+15);
+        glLineWidth(20.0f);
+
+        glEnd();
+
+        glBegin(GL_POLYGON);
+        glColor3f(0.824f, 0.275f, 0.769f);
+        glVertex2i(_x-10,_y);
+        glVertex2i(_x+10,_y);
+        glVertex2i(_x+7,_y-15);
+        glVertex2i(_x-7,_y-15);
+        glEnd();
+
+
+        break;
+
+    case BLUEBERRY:
+
+        _y+=7;
+            glColor3f(1.0f,1.0f,1.0f);
+        for(int i = 0; i<9;i++)
+        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, p_blueberry[i]);
+        glColor3f(0.145f, 0.301f, 0.203f);
+        glBegin(GL_POLYGON);
+        glVertex2i(_x-10,_y);
+        glVertex2i(_x,_y+20); 
+        glVertex2i(_x+10,_y);
+        glEnd();
+
+        glBegin(GL_POLYGON);
+        glVertex2i(_x-10,_y+15);
+        glVertex2i(_x,_y-5); 
+        glVertex2i(_x+10,_y+15);
+        glEnd();
+
+        glColor3f(0.164f, 0.266f, 0.718f);
+        glPointSize(4.0f);
+        glBegin(GL_POINTS);
+        glVertex2i(_x-7,_y+13);
+        glVertex2i(_x,_y-2); 
+        glVertex2i(_x+7,_y+13);
+        glVertex2i(_x,_y+7);
+        glVertex2i(_x-7,_y);
+        glVertex2i(_x,_y+17); 
+        glVertex2i(_x+7,_y);
+        glEnd();
+
+    break;
+
+    case CARROT:
+        glColor3f(1.0f,1.0f,1.0f);
+        for(int i = 0; i<6;i++)
+        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, p_onion[i]);
+
+
+        glColor3f(0.988f, 0.596f, 0.055f);
+        glBegin(GL_POLYGON);
+        glVertex2i(_x,_y-10); 
+        glVertex2i(_x-10,_y+20);
+        glVertex2i(_x+10,_y+20); 
+        glEnd();
+
+         glColor3f(0.145f, 0.301f, 0.203f);
+        glBegin(GL_POLYGON);
+        glVertex2i(_x,_y+20);
+        glVertex2i(_x-5,_y+30); 
+        glVertex2i(_x-7.5,_y+25);
+        glVertex2i(_x-5,_y+35); 
+        glEnd();
+
+        glBegin(GL_POLYGON);
+        glVertex2i(_x,_y+20);
+        glVertex2i(_x+5,_y+30); 
+        glVertex2i(_x+7.5,_y+25);
+        glVertex2i(_x+5,_y+35); 
+        glEnd();
+    break;
+
+    }
+
 
 }
 
@@ -626,17 +839,25 @@ void drawTool(int x, int y)
 
 void actionMenuCallBack(int option) {
     SELECTED_ACTION = static_cast<Actions>(option);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glutPostRedisplay();
+
 }
 
 void travelMenuCallBack(int option)
 {
     CURRENT_LOCATION = static_cast<Locations>(option);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glutPostRedisplay();
+
 }
 
 void plantSelectCallBack(int option)
 {
-    printf("Selected new plant %d",option);
     SELECTED_PLANT = static_cast<PlantType>(option);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glutPostRedisplay();
+
 }
 
 void initializeMenu()
@@ -734,7 +955,7 @@ void display() {
      }
 
     drawHouse();
-    drawTool(20,750);
+    drawTool(45,700);
 
 
 
@@ -815,5 +1036,8 @@ int main(int argc, char** argv) {
     initializeFuncs();
     initializeMenu();
     glutMainLoop();
+    GameManager.carrot_seeds = 2;
+    GameManager.blueberry_seeds = 2;
+    GameManager.onion_seeds = 2;
     return 0;
 }

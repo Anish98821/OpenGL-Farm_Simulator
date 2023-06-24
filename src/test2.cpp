@@ -45,7 +45,8 @@ enum PlantType
 
 enum Locations {
     MARKET,
-    FIELD
+    FIELD,
+    CERTIFICATE_PAGE
 };
 
 #pragma endregion
@@ -53,12 +54,14 @@ enum Locations {
 #pragma region GLOBAL_VARIABLES
 
 Actions SELECTED_ACTION = WATER;
-Locations CURRENT_LOCATION = MARKET;
+Locations CURRENT_LOCATION = CERTIFICATE_PAGE;
 PlantType SELECTED_PLANT = CARROT;
 char* ACTION_MESSAGE = "";
 int MONEY = 0;
 int FIELD_LENGTH = 150;
 int FIELD_WIDTH = 100;
+
+bool isInventoryOpen = false;
 
 unsigned char a_plough[] = "Plough";
 unsigned char a_water[] = "Water";
@@ -77,15 +80,29 @@ int carrot_cost;
 int blueberry_cost;
 int onion_cost;
 
-int carrot_seeds;
-int blueberry_seeds;
-int onion_seeds;
+int carrot_seeds = 8;
+int blueberry_seeds = 6;
+int onion_seeds = 6;
+
+int carrots = 0;
+int carrot_return_seeds = 8;
+int carrot_per_field_seeds = 6;
+int carrot_return;
+
+
+int onions = 0;
+int onion_return_seeds = 8;
+int onion_per_field_seeds = 6;
+int onion_return;
+
+int blueberries = 0;
+int blueberry_return_seeds = 4;
+int bluberry_per_field_seed;
+int blueberry_return;
 
 } GameManager;
 
 #pragma endregion
-
-
 
 #pragma region CLASS_DEFS
 
@@ -198,7 +215,7 @@ class Field
     int x_cord;
     int y_cord;
     bool isWatered = true;
-    bool isTilled = true;
+    bool isTilled = false;
     bool isPlanted = false;
     int dryUpTime = 0;
     FieldStages current_stage;
@@ -210,7 +227,7 @@ class Field
         x_cord = x;
         y_cord = y;
        
-        dryUpTime = 500 +  (rand() % (3 - (-3) + 1) + (-3)); 
+        dryUpTime = 100 +  (rand() % (3 - (-3) + 1) + (-3)); 
   
     }
 
@@ -296,6 +313,32 @@ class Field
   
                 if(isWatered && isTilled && !isPlanted)
                 {
+         
+
+                    switch (SELECTED_PLANT)
+                    {
+                    case CARROT:
+                        if(GameManager.carrot_seeds >= 6 )
+                        GameManager.carrot_seeds -= 6;
+                        else
+                            return;
+                        break;
+                        
+                    case ONION:
+                        if(GameManager.onion_seeds >= 6)
+                            GameManager.onion_seeds -= 6;
+                        else
+                            return;
+                        break;
+                   
+                    case BLUEBERRY:
+                        if(GameManager.blueberry_seeds >= 6)
+                        GameManager.blueberry_seeds -= 6;
+                        else 
+                            return;
+                        break;
+                        
+                    }
                     isPlanted = true;
                     plant = Plant(SELECTED_PLANT);
                 }
@@ -316,6 +359,26 @@ class Field
                     glClear(GL_COLOR_BUFFER_BIT);
                     isPlanted = false;
                     isTilled = false;
+                    
+                    switch (plant.type)
+                    {
+                    case CARROT:
+                        GameManager.carrot_seeds += GameManager.carrot_return_seeds;
+                        GameManager.carrots += 6;
+                        break;
+                    case ONION:
+                        GameManager.onion_seeds += GameManager.onion_return_seeds;
+                        GameManager.onions += 6;
+                        break;
+                    case BLUEBERRY:
+                        GameManager.blueberry_seeds += GameManager.blueberry_return_seeds;
+                        GameManager.blueberries += 12;
+                        break;
+                
+                    }
+                   
+
+
                     
                 }
             }
@@ -643,6 +706,7 @@ void drawTool(int x, int y)
     glVertex2i(100,750);
     glEnd();
 
+    if(SELECTED_ACTION ==  PLANT)
     glBegin(GL_LINE_LOOP);
     glVertex2i(40,670);
     glVertex2i(40,610);
@@ -652,6 +716,7 @@ void drawTool(int x, int y)
 
     glRasterPos2i(110, 715);
 
+ 
   switch (SELECTED_ACTION)
   {
   case WATER:
@@ -733,6 +798,7 @@ void drawTool(int x, int y)
     
     glRasterPos2i(110, 635);
 
+    if(SELECTED_ACTION == PLANT)
     switch (SELECTED_PLANT)
     {
     case ONION:
@@ -901,8 +967,8 @@ int FIELDS_COUNT = 9;
 float cameraY = 0.0f;
 float cameraX = 0.0f;
 
-
-void display() {
+void drawFieldSurroundings()
+{
 
     glColor3f(0.066f, 0.329f, 0.082f);
     glBegin(GL_POLYGON);
@@ -934,7 +1000,6 @@ void display() {
     glVertex2i(750,680);
     glVertex2i(750,430);
     glEnd();
-
     glLineWidth(15.0f);
     glColor3f(0.463f, 0.208f, 0.024f);
     glLineStipple(10,3);
@@ -947,18 +1012,118 @@ void display() {
     glVertex2i(750,680);
     glVertex2i(750,430);
     glEnd();
-    glDisable(GL_LINE_STIPPLE);
+    glutPostRedisplay();
+}
 
-     for(int i = 0; i<FIELDS_COUNT; i++)
-     {
-        ACTIVE_FIELDS[i].drawSelf();
-     }
+void writeText(int x, int y, char* string)
+{
+   // glColor3f(colorR,colorG,colorB);
+    glRasterPos2i(x,y);
+    int l = strlen(string);
+    for(int i = 0; i < l; i++)
+    glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, string[i]);
 
-    drawHouse();
-    drawTool(45,700);
+}
+
+void certPage()
+{
+   // glClearColor(0,0,0,1);
+    glColor3f(0.0f,0.0f,0.0f);
+    glBegin(GL_POLYGON);
+        glVertex2i(0,0);
+        glVertex2i(0,900);
+        glVertex2i(1800,900);
+        glVertex2i(1800,0);
+    glEnd();
+
+	glColor3f(1.0, 0.0, 0.0);
+	writeText(450, 700, "SAHYADRI COLLEGE OF ENGINEERING AND MANAGEMENT");
+	glColor3f(1.0, 1.0, 1.0);
+	writeText(450, 650, "DEPARTMENT OF COMPUTER SCIENCE AND ENGINEERING");
+	glColor3f(0.0, 0.0, 1.0);
+	writeText(680, 550, "A MINI PROJECT ON ");
+	glColor3f(1.0, 0.0, 1.0);
+	writeText(668, 520,"Farming Simulator Game");
+   	glColor3f(1.0, 0.7, 0.8);
+	writeText(755, 450, "Created By");
+	glColor3f(1.0, 1.0, 1.0);
+    writeText(765, 400,"Anish U");
+    glColor3f(1.0, 1.0, 1.0);
+    writeText(738, 375, "4SF20CS014");
+
+    glColor3f(1.0, 0.0, 0.0);
+    writeText(690, 300,"Under the Guidance of");
+    glColor3f(1.0, 1.0, 1.0);
+    writeText(730, 270, "Ms Megha Rani");
+    glColor3f(1.0, 1.0, 1.0);   
+    writeText(710, 240, "Assistant Professor");
+    glColor3f(1.0, 0.0, 0.0);
+    writeText(730, 180, "Academic Year");
+    glColor3f(1.0, 1.0, 1.0);
+    writeText(755, 155, "2022-2023");
+    glColor3f(1.0, 1.0, 1.0);
+    writeText(650, 75, "Press ENTER to start the game");
+
+
+}
+
+void drawInventory()
+{
+    if(!isInventoryOpen)
+        return;
+
+    glColor3f(0.0f,0.0f,0.0f);
+        glBegin(GL_POLYGON);
+        glVertex2i(600,300);
+        glVertex2i(1000,300);
+        glVertex2i(1000,600);
+        glVertex2i(600,600);
+    glEnd();
+    char temp[100];
+    glColor3f(1,1,1);
+    writeText(750,570,"Inventory");
+    sprintf(temp,"Carrots                     x %d",GameManager.carrots);
+    writeText(670,530,temp);
+    sprintf(temp,"Carrot Seeds            x %d",GameManager.carrot_seeds);
+    writeText(670,490,temp);
+    sprintf(temp,"Onions                     x %d",GameManager.onions);
+    writeText(670,450,temp);
+    sprintf(temp,"Onion Seeds            x %d",GameManager.onion_seeds);
+    writeText(670,410,temp);
+    sprintf(temp,"Blueberries              x %d",GameManager.blueberries);
+    writeText(670,370,temp);  
+    sprintf(temp,"Blueberry Seeds      x %d",GameManager.blueberry_seeds);
+    writeText(670,330,temp);
 
 
 
+}
+
+void display() {
+
+    switch (CURRENT_LOCATION)
+    {
+        case FIELD:
+            glClear(GL_COLOR_BUFFER_BIT);
+            drawFieldSurroundings();
+            glDisable(GL_LINE_STIPPLE);
+
+            for(int i = 0; i<FIELDS_COUNT; i++)
+            {
+                ACTIVE_FIELDS[i].drawSelf();
+            }
+
+            drawHouse();
+            drawTool(45,700);
+            drawInventory();
+        break;
+
+        case CERTIFICATE_PAGE:
+            certPage();
+        break;
+    }
+
+    
     glFlush();
     glutSwapBuffers();
 }
@@ -970,6 +1135,7 @@ void mouse(int button, int state, int x, int y) {
         int mouseX, mouseY;
         mouseX = x + 30;
         mouseY = glutGet(GLUT_WINDOW_HEIGHT) - y - 30;
+        if(!isInventoryOpen)
         for(int i = 0; i<FIELDS_COUNT; i++)
         {
             ACTIVE_FIELDS[i].onClick(mouseX,mouseY);
@@ -986,27 +1152,20 @@ void idleFunc()
      {
          ACTIVE_FIELDS[i].plant.updatePlant();
          ACTIVE_FIELDS[i].updateField();
-     }
-     
+     }  
 }
 
 void handleKeyPress(unsigned char key, int x, int y) {
     switch(key) { 
-        case 'w': // move camera up
-            cameraY += 1.0f;
-            glutPostRedisplay(); // adjust camera position in the y-axis
+        case 'i':
+            isInventoryOpen = !isInventoryOpen;
+            glutPostRedisplay();
             break;
-        case 's': // move camera up
-            cameraY -= 1.0f;
-            glutPostRedisplay(); // adjust camera position in the y-axis
-            break;
-        case 'a': // move camera up
-            cameraX -= 1.0f;
-            glutPostRedisplay(); // adjust camera position in the y-axis
-            break;
-        case 'd': // move camera up
-            cameraX += 1.0f;
-            glutPostRedisplay(); // adjust camera position in the y-axis
+        case 13:
+            if(CURRENT_LOCATION == CERTIFICATE_PAGE)
+            CURRENT_LOCATION = FIELD;
+            glutPostRedisplay();
+            glClear(GL_COLOR_BUFFER_BIT);
             break;
     }
 }
@@ -1015,10 +1174,11 @@ void initializeGlut()
 {
     glutInitDisplayMode(GLUT_DOUBLE|GLUT_RGBA);
     glutInitWindowSize(400, 400);
-    glutCreateWindow("OpenGL Red Dot");
+    glutCreateWindow("Farming Simulator Game");
     gluOrtho2D(0,1600,0,800);
-    glutFullScreen();
     glClearColor(0.254f, 0.547f, 0.066f,0.0f);
+    glutFullScreen();
+
 }
 
 void initializeFuncs()
@@ -1036,8 +1196,5 @@ int main(int argc, char** argv) {
     initializeFuncs();
     initializeMenu();
     glutMainLoop();
-    GameManager.carrot_seeds = 2;
-    GameManager.blueberry_seeds = 2;
-    GameManager.onion_seeds = 2;
     return 0;
 }

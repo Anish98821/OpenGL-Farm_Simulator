@@ -1,24 +1,16 @@
 
 #include<GL/freeglut_std.h>
-//#include <GL/glut.h>
 #include <stdio.h>
 #include <array>
 #include <ctime>
-
-
-/*
-int points[20][2];
-
-int no = 2;
-*/
-
+#include <math.h>
 
 
 void drawCarrot(int,int,int);
 void drawBlueberry(int,int,int);
 void drawOnion(int, int, int);
 void drawTool(int,int);
-
+void drawCircle(float cx, float cy, float r, int num_segments);
 
 #pragma region GLOBAL_ENUMS
 
@@ -54,7 +46,7 @@ enum Locations {
 #pragma region GLOBAL_VARIABLES
 
 Actions SELECTED_ACTION = WATER;
-Locations CURRENT_LOCATION = CERTIFICATE_PAGE;
+Locations CURRENT_LOCATION = FIELD;
 PlantType SELECTED_PLANT = CARROT;
 char* ACTION_MESSAGE = "";
 int MONEY = 0;
@@ -67,11 +59,12 @@ unsigned char a_plough[] = "Plough";
 unsigned char a_water[] = "Water";
 unsigned char a_harvest[] = "Harvest";
 unsigned char a_seed[] = "Seed";
-
-
 unsigned char p_carrot[] = "Carrot";
 unsigned char p_blueberry[] = "Blueberry";
 unsigned char p_onion[] = "Onion";
+
+char harvestedCrops[100] = "";
+int noHarvestedCrops = 0;
 
 
 struct manager
@@ -110,12 +103,6 @@ class Plant
 {
    
 
-    GLfloat plantColors[3][3][3] = 
-    {{{1.0f,0.0f,0.0f},{1.0f,1.0f,0.0f},{0.0f,1.0f,0.0f}},
-    {{1.0f,0.5f,1.0f},{1.0f,1.0f,0.0f},{0.0f,1.0f,0.0f}},
-    {{1.0f,0.5f,0.5f},{1.0f,1.0f,0.0f},{0.0f,1.0f,0.0f}}
-    };
-
     int stageUpTimes[3][2] =
     {
         {3,10},
@@ -129,22 +116,21 @@ class Plant
         int stage = 0;
         Plant(PlantType _type)
         {
-            printf("got plant %d ", _type);
+        
             last_state_update_time = time(nullptr);
             type = _type;
         }
 
         Plant()
         {
-            last_state_update_time = time(nullptr);
-            type = CARROT;
+
         }
 
         void drawPlant(int x, int y)
         {
             int xOff = 0;
             int yOff = 0;
-            glColor3fv(plantColors[type][stage]);
+
             glPointSize(10.0f);
 
             y+= 10;
@@ -202,6 +188,7 @@ class Plant
         {
             if(stage == 2)
                 return true;
+            else return false;
         }
 };
 
@@ -226,31 +213,8 @@ class Field
        
         x_cord = x;
         y_cord = y;
-       
         dryUpTime = 100 +  (rand() % (3 - (-3) + 1) + (-3)); 
-  
     }
-
-    GLfloat* getColor()
-    {
-        static GLfloat red_arr[] = {1.0f,1.0f,1.0f};
-        static GLfloat blue_arr[] = {0.0f,0.0,1.0f};
-        static GLfloat green_arr[] = {0.0f,1.0,0.0f};
-        switch(current_stage)
-        {
-        case A:
-            return red_arr;
-        case B:
-            return blue_arr;
-        case C:
-            return green_arr;
-        }
-    }
-    void plantField()
-    {}
-
-    void tillField()
-    {}
 
     void drawSelf()
     {
@@ -342,13 +306,10 @@ class Field
                     isPlanted = true;
                     plant = Plant(SELECTED_PLANT);
                 }
-               // ACTION_MESSAGE = "Plantations Requirements not complete";
-               // else if(isPlanted)
-             //   ACTION_MESSAGE = "Already Planted";
+
                 else
                 {
                     last_planted_time = time(nullptr);
-                    //plant = Plant(SELECTED_PLANT);
                 }
                 break;
             }
@@ -363,14 +324,20 @@ class Field
                     switch (plant.type)
                     {
                     case CARROT:
+                         harvestedCrops[noHarvestedCrops] = 'C';
+                         noHarvestedCrops++;
                         GameManager.carrot_seeds += GameManager.carrot_return_seeds;
                         GameManager.carrots += 6;
                         break;
                     case ONION:
+                     harvestedCrops[noHarvestedCrops] = 'O';
+                     noHarvestedCrops++;
                         GameManager.onion_seeds += GameManager.onion_return_seeds;
                         GameManager.onions += 6;
                         break;
                     case BLUEBERRY:
+                     harvestedCrops[noHarvestedCrops] = 'B';
+                     noHarvestedCrops++;
                         GameManager.blueberry_seeds += GameManager.blueberry_return_seeds;
                         GameManager.blueberries += 12;
                         break;
@@ -964,8 +931,108 @@ Field ACTIVE_FIELDS[] = {
     };
 int FIELDS_COUNT = 9;
 
-float cameraY = 0.0f;
-float cameraX = 0.0f;
+void drawCart(int x, int y)
+{
+if(noHarvestedCrops > 15) 
+    noHarvestedCrops = 0;
+
+
+glBegin(GL_POLYGON);
+glColor3f(0.434f, 0.204f, 0.09f);
+glVertex2i(x+0,y+50);
+glVertex2i(x+150,y+50);
+glVertex2i(x+150,y-20);
+glVertex2i(x+0,y-20);
+glEnd();
+glBegin(GL_POLYGON);
+glColor3f(0.434f, 0.204f, 0.09f);
+glVertex2i(x+0,y+0);
+glVertex2i(x+0,y+50);
+glVertex2i(x+150,y+50);
+glVertex2i(x+150,y+0);
+glEnd();
+glColor3f(0.235f, 0.110f, 0.047f);
+glBegin(GL_POLYGON);
+glVertex2i(x+10,y+5);
+glVertex2i(x+10,y+45);
+glVertex2i(x+140,y+45);
+glVertex2i(x+140,y+5);
+glEnd();
+drawCircle(x+10,y-20,20,8);
+drawCircle(x+140,y-20,20,8);
+
+glPointSize(8.0f);
+int temp;
+int inARow = 8;
+int gap = 15;
+for(int i = 0; harvestedCrops[i] != '\0';i++ )
+{
+
+    switch (harvestedCrops[i])
+    {
+    case 'O' :
+        glColor3f(0.824f, 0.275f, 0.769f);
+        break;
+    
+    case 'C':
+        glColor3f(0.988f, 0.596f, 0.055f);
+        break;
+    
+    case 'B':
+        glColor3f(0.164f, 0.266f, 0.718f);
+        break;
+    
+    default:
+        break;
+    }
+
+     temp = i%inARow;
+    drawCircle(x+20+(temp*gap),y+12+((int)(i/inARow))*gap,10,8);
+   /* glBegin(GL_POINTS);
+   
+    glVertex2i(x+16+(temp*8),y+9+((int)(i/20))*8);
+    glEnd();*/
+
+}
+
+}
+
+
+void drawCircle(float cx, float cy, float r, int num_segments)
+{
+    float theta = 3.1415926 * 2 / float(num_segments);
+    float tangetial_factor = tanf(theta);//calculate the tangential factor 
+
+    float radial_factor = cosf(theta);//calculate the radial factor 
+
+    float x = r;//we start at angle = 0 
+
+    float y = 0;
+    glLineWidth(2);
+    glBegin(GL_POLYGON);
+    for (int ii = 0; ii < num_segments; ii++)
+    {
+        glVertex2f(x + cx, y + cy);//output vertex 
+
+        //calculate the tangential vector 
+        //remember, the radial vector is (x, y) 
+        //to get the tangential vector we flip those coordinates and negate one of them 
+
+        float tx = -y;
+        float ty = x;
+
+        //add the tangential vector 
+
+        x += tx * tangetial_factor;
+        y += ty * tangetial_factor;
+
+        //correct using the radial factor 
+
+        x *= radial_factor;
+        y *= radial_factor;
+    }
+    glEnd();
+}
 
 void drawFieldSurroundings()
 {
@@ -1115,6 +1182,8 @@ void display() {
 
             drawHouse();
             drawTool(45,700);
+            drawCart(570,100);
+ 
             drawInventory();
         break;
 

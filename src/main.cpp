@@ -59,6 +59,7 @@ unsigned char a_plough[] = "Plough";
 unsigned char a_water[] = "Water";
 unsigned char a_harvest[] = "Harvest";
 unsigned char a_seed[] = "Seed";
+
 unsigned char p_carrot[] = "Carrot";
 unsigned char p_blueberry[] = "Blueberry";
 unsigned char p_onion[] = "Onion";
@@ -835,9 +836,7 @@ void drawTool(int x, int y)
     case CARROT:
         glColor3f(1.0f,1.0f,1.0f);
         for(int i = 0; i<6;i++)
-        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, p_onion[i]);
-
-
+        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, p_carrot[i]);
         glColor3f(0.988f, 0.596f, 0.055f);
         glBegin(GL_POLYGON);
         glVertex2i(_x,_y-10); 
@@ -1226,6 +1225,9 @@ void idleFunc()
 
 void handleKeyPress(unsigned char key, int x, int y) {
     switch(key) { 
+        case 'q':
+            exit(0);
+            
         case 'i':
             isInventoryOpen = !isInventoryOpen;
             glutPostRedisplay();

@@ -36,9 +36,9 @@ enum PlantType
 };
 
 enum Locations {
-    MARKET,
+
     FIELD,
-    CERTIFICATE_PAGE
+
 };
 
 #pragma endregion
@@ -54,6 +54,7 @@ int FIELD_LENGTH = 150;
 int FIELD_WIDTH = 100;
 
 bool isInventoryOpen = false;
+bool isInstructionsOpen = true;
 
 unsigned char a_plough[] = "Plough";
 unsigned char a_water[] = "Water";
@@ -107,8 +108,8 @@ class Plant
     int stageUpTimes[3][2] =
     {
         {3,10},
-        {3,10},
-        {3,10}
+        {30,20},
+        {10,20}
     };
 
     public:
@@ -214,7 +215,7 @@ class Field
        
         x_cord = x;
         y_cord = y;
-        dryUpTime = 100 +  (rand() % (3 - (-3) + 1) + (-3)); 
+        dryUpTime = 30 +  (rand() % (20 - (-20) + 1) + (-20)); 
     }
 
     void drawSelf()
@@ -325,20 +326,22 @@ class Field
                     switch (plant.type)
                     {
                     case CARROT:
-                         harvestedCrops[noHarvestedCrops] = 'C';
-                         noHarvestedCrops++;
+                        harvestedCrops[noHarvestedCrops] = 'C';
+                        noHarvestedCrops++;
                         GameManager.carrot_seeds += GameManager.carrot_return_seeds;
                         GameManager.carrots += 6;
                         break;
+
                     case ONION:
-                     harvestedCrops[noHarvestedCrops] = 'O';
-                     noHarvestedCrops++;
+                        harvestedCrops[noHarvestedCrops] = 'O';
+                        noHarvestedCrops++;
                         GameManager.onion_seeds += GameManager.onion_return_seeds;
                         GameManager.onions += 6;
                         break;
+
                     case BLUEBERRY:
-                     harvestedCrops[noHarvestedCrops] = 'B';
-                     noHarvestedCrops++;
+                        harvestedCrops[noHarvestedCrops] = 'B';
+                        noHarvestedCrops++;
                         GameManager.blueberry_seeds += GameManager.blueberry_return_seeds;
                         GameManager.blueberries += 12;
                         break;
@@ -379,14 +382,17 @@ void drawWindow(int x, int y)
 {
     int height = 30;
     int breadth = 45;
-  glColor3f(0.512f, 0.58f, 0.727f);
+    glColor3f(0.512f, 0.58f, 0.727f);
+
     glBegin(GL_POLYGON);
         glVertex2i(x,y);
         glVertex2i(x,y+height);
         glVertex2i(x+breadth,y+height);
         glVertex2i(x+breadth,y);
     glEnd();
+
     glLineWidth(3.0f);
+
     glColor3f(0.371f, 0.42f, 0.527f);
 
     glBegin(GL_LINE_LOOP);
@@ -411,31 +417,34 @@ void drawOnion(int x, int y, int stage)
     switch (stage)
     {
     case 0:
+
         y-=5;
+
         glColor3f(0.882f, 0.741f, 0.345f);
+
         glPointSize(3.0f);
         glBegin(GL_POINTS);
-        glVertex2i(x,y+22);
-        glVertex2i(x-3,y+19);
-        glVertex2i(x+4,y+30);
-        glVertex2i(x-5,y+32);
+            glVertex2i(x,y+22);
+            glVertex2i(x-3,y+19);
+            glVertex2i(x+4,y+30);
+            glVertex2i(x-5,y+32);
         glEnd();
-        break;
+
+        
         break;
     case 1:
         y+=10;
         glLineWidth(5.0f);
         glBegin(GL_LINES);
-        glColor3f(0.2f, 0.275f, 0.208f);
-        glVertex2i(x+2.5,y+7);
-        glVertex2i(x+12.5,y+10);
-        glVertex2i(x-1.5,y+3);
-        glVertex2i(x-7.5,y+9);
-        glColor3f(0.949f, 0.839f, 0.906f);
-        glVertex2i(x,y);
-        glColor3f(0.422f, 0.576f, 0.439f);
-        glVertex2i(x,y+15);
-
+            glColor3f(0.2f, 0.275f, 0.208f);
+            glVertex2i(x+2.5,y+7);
+            glVertex2i(x+12.5,y+10);
+            glVertex2i(x-1.5,y+3);
+            glVertex2i(x-7.5,y+9);
+            glColor3f(0.949f, 0.839f, 0.906f);
+            glVertex2i(x,y);
+            glColor3f(0.422f, 0.576f, 0.439f);
+            glVertex2i(x,y+15);
         glEnd();
         break;
 
@@ -443,19 +452,19 @@ void drawOnion(int x, int y, int stage)
         y+=15;
         glLineWidth(5.0f);
         glBegin(GL_LINES);
-        glColor3f(0.2f, 0.275f, 0.208f);
-        glVertex2i(x+2.5,y+7);
-        glVertex2i(x+12.5,y+10);
-        glVertex2i(x-1.5,y+3);
-        glVertex2i(x-7.5,y+9);
-        glColor3f(0.949f, 0.839f, 0.906f);
-        glVertex2i(x,y);
-        glColor3f(0.422f, 0.576f, 0.439f);
-        glVertex2i(x,y+15);
-        glLineWidth(20.0f);
-        glColor3f(0.824f, 0.275f, 0.769f);
-        glVertex2i(x-5,y);
-        glVertex2i(x+5,y);
+            glColor3f(0.2f, 0.275f, 0.208f);
+            glVertex2i(x+2.5,y+7);
+            glVertex2i(x+12.5,y+10);
+            glVertex2i(x-1.5,y+3);
+            glVertex2i(x-7.5,y+9);
+            glColor3f(0.949f, 0.839f, 0.906f);
+            glVertex2i(x,y);
+            glColor3f(0.422f, 0.576f, 0.439f);
+            glVertex2i(x,y+15);
+            glLineWidth(20.0f);
+            glColor3f(0.824f, 0.275f, 0.769f);
+            glVertex2i(x-5,y);
+            glVertex2i(x+5,y);
         glEnd();
 
         
@@ -474,24 +483,24 @@ void drawBlueberry(int x, int y, int stage)
         glColor3f(0.882f, 0.741f, 0.345f);
         glPointSize(3.0f);
         glBegin(GL_POINTS);
-        glVertex2i(x,y+22);
-        glVertex2i(x-3,y+19);
-        glVertex2i(x+4,y+30);
-        glVertex2i(x-5,y+32);
+            glVertex2i(x,y+22);
+            glVertex2i(x-3,y+19);
+            glVertex2i(x+4,y+30);
+            glVertex2i(x-5,y+32);
         glEnd();
         break;
 
     case 1:
         glColor3f(0.145f, 0.301f, 0.203f);
         glBegin(GL_POLYGON);
-        glVertex2i(x-5,y+10);
-        glVertex2i(x,y+20); 
-        glVertex2i(x+5,y+10);
+            glVertex2i(x-5,y+10);
+            glVertex2i(x,y+20); 
+            glVertex2i(x+5,y+10);
         glEnd();
         glBegin(GL_POLYGON);
-        glVertex2i(x-5,y+17);
-        glVertex2i(x,y+7); 
-        glVertex2i(x+5,y+17);
+            glVertex2i(x-5,y+17);
+            glVertex2i(x,y+7); 
+            glVertex2i(x+5,y+17);
         glEnd();
         break;
 
@@ -500,27 +509,27 @@ void drawBlueberry(int x, int y, int stage)
 
         glColor3f(0.145f, 0.301f, 0.203f);
         glBegin(GL_POLYGON);
-        glVertex2i(x-10,y);
-        glVertex2i(x,y+20); 
-        glVertex2i(x+10,y);
+            glVertex2i(x-10,y);
+            glVertex2i(x,y+20); 
+            glVertex2i(x+10,y);
         glEnd();
 
         glBegin(GL_POLYGON);
-        glVertex2i(x-10,y+15);
-        glVertex2i(x,y-5); 
-        glVertex2i(x+10,y+15);
+            glVertex2i(x-10,y+15);
+            glVertex2i(x,y-5); 
+            glVertex2i(x+10,y+15);
         glEnd();
 
         glColor3f(0.164f, 0.266f, 0.718f);
         glPointSize(4.0f);
         glBegin(GL_POINTS);
-        glVertex2i(x-7,y+13);
-        glVertex2i(x,y-2); 
-        glVertex2i(x+7,y+13);
-        glVertex2i(x,y+7);
-        glVertex2i(x-7,y);
-        glVertex2i(x,y+17); 
-        glVertex2i(x+7,y);
+            glVertex2i(x-7,y+13);
+            glVertex2i(x,y-2); 
+            glVertex2i(x+7,y+13);
+            glVertex2i(x,y+7);
+            glVertex2i(x-7,y);
+            glVertex2i(x,y+17); 
+            glVertex2i(x+7,y);
         glEnd();
         break;
 
@@ -538,52 +547,52 @@ void drawCarrot(int x, int y,int stage)
         glColor3f(0.882f, 0.741f, 0.345f);
         glPointSize(3.0f);
         glBegin(GL_POINTS);
-        glVertex2i(x,y+22);
-        glVertex2i(x-3,y+19);
-        glVertex2i(x+4,y+30);
-        glVertex2i(x-5,y+32);
+            glVertex2i(x,y+22);
+            glVertex2i(x-3,y+19);
+            glVertex2i(x+4,y+30);
+            glVertex2i(x-5,y+32);
         glEnd();
         break;
 
     case 1:
         glColor3f(0.145f, 0.301f, 0.203f);
         glBegin(GL_POLYGON);
-        glVertex2i(x,y+20);
-        glVertex2i(x-5,y+30); 
-        glVertex2i(x-7.5,y+25);
-        glVertex2i(x-5,y+35); 
+            glVertex2i(x,y+20);
+            glVertex2i(x-5,y+30); 
+            glVertex2i(x-7.5,y+25);
+            glVertex2i(x-5,y+35); 
         glEnd();
 
         glBegin(GL_POLYGON);
-        glVertex2i(x,y+20);
-        glVertex2i(x+5,y+30); 
-        glVertex2i(x+7.5,y+25);
-        glVertex2i(x+5,y+35); 
+            glVertex2i(x,y+20);
+            glVertex2i(x+5,y+30); 
+            glVertex2i(x+7.5,y+25);
+            glVertex2i(x+5,y+35); 
         glEnd();
         break;
     
     case 2:
         glColor3f(0.988f, 0.596f, 0.055f);
         glBegin(GL_POLYGON);
-        glVertex2i(x-7,y+12); 
-        glVertex2i(x-10,y+20);
-        glVertex2i(x+10,y+20); 
-        glVertex2i(x+7,y+12);
+            glVertex2i(x-7,y+12); 
+            glVertex2i(x-10,y+20);
+            glVertex2i(x+10,y+20); 
+            glVertex2i(x+7,y+12);
         glEnd();
 
          glColor3f(0.145f, 0.301f, 0.203f);
         glBegin(GL_POLYGON);
-        glVertex2i(x,y+20);
-        glVertex2i(x-5,y+30); 
-        glVertex2i(x-7.5,y+25);
-        glVertex2i(x-5,y+35); 
+            glVertex2i(x,y+20);
+            glVertex2i(x-5,y+30); 
+            glVertex2i(x-7.5,y+25);
+            glVertex2i(x-5,y+35); 
         glEnd();
 
         glBegin(GL_POLYGON);
-        glVertex2i(x,y+20);
-        glVertex2i(x+5,y+30); 
-        glVertex2i(x+7.5,y+25);
-        glVertex2i(x+5,y+35); 
+            glVertex2i(x,y+20);
+            glVertex2i(x+5,y+30); 
+            glVertex2i(x+7.5,y+25);
+            glVertex2i(x+5,y+35); 
         glEnd();
         break;
     }
@@ -668,18 +677,18 @@ void drawTool(int x, int y)
     int _y = 627;
     glColor3f(1.0,1.0,1.0);
     glBegin(GL_LINE_LOOP);
-    glVertex2i(40,750);
-    glVertex2i(40,690);
-    glVertex2i(100,690);
-    glVertex2i(100,750);
+        glVertex2i(40,750);
+        glVertex2i(40,690);
+        glVertex2i(100,690);
+        glVertex2i(100,750);
     glEnd();
 
     if(SELECTED_ACTION ==  PLANT)
     glBegin(GL_LINE_LOOP);
-    glVertex2i(40,670);
-    glVertex2i(40,610);
-    glVertex2i(100,610);
-    glVertex2i(100,670);
+        glVertex2i(40,670);
+        glVertex2i(40,610);
+        glVertex2i(100,610);
+        glVertex2i(100,670);
     glEnd();
 
     glRasterPos2i(110, 715);
@@ -690,18 +699,18 @@ void drawTool(int x, int y)
   case WATER:
     glColor3f(0.25f, 0.258f, 0.277f);
     glBegin(GL_POLYGON);
-    glVertex2i(x+15,y);
-    glVertex2i(x+35,y);
-    glVertex2i(x+45,y+30);
-    glVertex2i(x+5,y+30);
+        glVertex2i(x+15,y);
+        glVertex2i(x+35,y);
+        glVertex2i(x+45,y+30);
+        glVertex2i(x+5,y+30);
     glEnd();
     glColor3f(0.109f, 0.62f, 0.89f);
    
     glBegin(GL_POLYGON);
-    glVertex2i(x+45,y+28);
-    glVertex2i(x+5,y+28);
-    glVertex2i(x+9,y+25);
-    glVertex2i(x+41,y+25);
+        glVertex2i(x+45,y+28);
+        glVertex2i(x+5,y+28);
+        glVertex2i(x+9,y+25);
+        glVertex2i(x+41,y+25);
     glEnd();
     glColor3f(1.0f,1.0f,1.0f);
     for(int i = 0; i<5;i++)
@@ -712,14 +721,14 @@ void drawTool(int x, int y)
   case TILL:
     glColor3f(0.525f, 0.286f, 0.184f);
     glBegin(GL_LINES);
-    glVertex2i(x,y);
-    glVertex2i(x+40,y+40);
+        glVertex2i(x,y);
+        glVertex2i(x+40,y+40);
     glEnd();
     glColor3f(0.25f, 0.258f, 0.277f);
     glBegin(GL_POLYGON);
-    glVertex2i(x+40,y+40);
-    glVertex2i(x+35,y+30);
-    glVertex2i(x+45,y+25);
+        glVertex2i(x+40,y+40);
+        glVertex2i(x+35,y+30);
+        glVertex2i(x+45,y+25);
     glEnd();
     glColor3f(1.0f,1.0f,1.0f);
     for(int i = 0; i<6;i++)
@@ -733,10 +742,10 @@ void drawTool(int x, int y)
         glColor3f(0.882f, 0.741f, 0.345f);
         glPointSize(3.0f);
         glBegin(GL_POINTS);
-        glVertex2i(x,y+22);
-        glVertex2i(x-3,y+19);
-        glVertex2i(x+4,y+30);
-        glVertex2i(x-5,y+32);
+            glVertex2i(x,y+22);
+            glVertex2i(x-3,y+19);
+            glVertex2i(x+4,y+30);
+            glVertex2i(x-5,y+32);
         glEnd();
             glColor3f(1.0f,1.0f,1.0f);
     for(int i = 0; i<5;i++)
@@ -747,16 +756,16 @@ void drawTool(int x, int y)
     glColor3f(0.525f, 0.286f, 0.184f);
     glLineWidth(6.0f);
     glBegin(GL_LINES);
-    glVertex2i(x,y);
-    glVertex2i(x+20,y+20);
+        glVertex2i(x,y);
+        glVertex2i(x+20,y+20);
     glEnd();
 
     glColor3f(0.25f, 0.258f, 0.277f);
     glBegin(GL_LINE_STRIP);
-    glVertex2i(x+20,y+20);
-    glVertex2i(x+13,y+30);
-    glVertex2i(x+20,y+40);
-    glVertex2i(x+35,y+40);
+        glVertex2i(x+20,y+20);
+        glVertex2i(x+13,y+30);
+        glVertex2i(x+20,y+40);
+        glVertex2i(x+35,y+40);
     glEnd();
     glColor3f(1.0f,1.0f,1.0f);
     for(int i = 0; i<7;i++)
@@ -776,25 +785,24 @@ void drawTool(int x, int y)
         glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, p_onion[i]);
         glLineWidth(5.0f);
         glBegin(GL_LINES);
-        glColor3f(0.2f, 0.275f, 0.208f);
-        glVertex2i(_x+2.5,_y+7);
-        glVertex2i(_x+12.5,_y+10);
-        glVertex2i(_x-1.5,_y+3);
-        glVertex2i(_x-7.5,_y+9);
-        glColor3f(0.949f, 0.839f, 0.906f);
-        glVertex2i(_x,_y);
-        glColor3f(0.422f, 0.576f, 0.439f);
-        glVertex2i(_x,_y+15);
-        glLineWidth(20.0f);
-
+            glColor3f(0.2f, 0.275f, 0.208f);
+            glVertex2i(_x+2.5,_y+7);
+            glVertex2i(_x+12.5,_y+10);
+            glVertex2i(_x-1.5,_y+3);
+            glVertex2i(_x-7.5,_y+9);
+            glColor3f(0.949f, 0.839f, 0.906f);
+            glVertex2i(_x,_y);
+            glColor3f(0.422f, 0.576f, 0.439f);
+            glVertex2i(_x,_y+15);
+            glLineWidth(20.0f);
         glEnd();
 
         glBegin(GL_POLYGON);
-        glColor3f(0.824f, 0.275f, 0.769f);
-        glVertex2i(_x-10,_y);
-        glVertex2i(_x+10,_y);
-        glVertex2i(_x+7,_y-15);
-        glVertex2i(_x-7,_y-15);
+            glColor3f(0.824f, 0.275f, 0.769f);
+            glVertex2i(_x-10,_y);
+            glVertex2i(_x+10,_y);
+            glVertex2i(_x+7,_y-15);
+            glVertex2i(_x-7,_y-15);
         glEnd();
 
 
@@ -808,27 +816,27 @@ void drawTool(int x, int y)
         glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, p_blueberry[i]);
         glColor3f(0.145f, 0.301f, 0.203f);
         glBegin(GL_POLYGON);
-        glVertex2i(_x-10,_y);
-        glVertex2i(_x,_y+20); 
-        glVertex2i(_x+10,_y);
+            glVertex2i(_x-10,_y);
+            glVertex2i(_x,_y+20); 
+            glVertex2i(_x+10,_y);
         glEnd();
 
         glBegin(GL_POLYGON);
-        glVertex2i(_x-10,_y+15);
-        glVertex2i(_x,_y-5); 
-        glVertex2i(_x+10,_y+15);
+            glVertex2i(_x-10,_y+15);
+            glVertex2i(_x,_y-5); 
+            glVertex2i(_x+10,_y+15);
         glEnd();
 
         glColor3f(0.164f, 0.266f, 0.718f);
         glPointSize(4.0f);
         glBegin(GL_POINTS);
-        glVertex2i(_x-7,_y+13);
-        glVertex2i(_x,_y-2); 
-        glVertex2i(_x+7,_y+13);
-        glVertex2i(_x,_y+7);
-        glVertex2i(_x-7,_y);
-        glVertex2i(_x,_y+17); 
-        glVertex2i(_x+7,_y);
+            glVertex2i(_x-7,_y+13);
+            glVertex2i(_x,_y-2); 
+            glVertex2i(_x+7,_y+13);
+            glVertex2i(_x,_y+7);
+            glVertex2i(_x-7,_y);
+            glVertex2i(_x,_y+17); 
+            glVertex2i(_x+7,_y);
         glEnd();
 
     break;
@@ -839,24 +847,24 @@ void drawTool(int x, int y)
         glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, p_carrot[i]);
         glColor3f(0.988f, 0.596f, 0.055f);
         glBegin(GL_POLYGON);
-        glVertex2i(_x,_y-10); 
-        glVertex2i(_x-10,_y+20);
-        glVertex2i(_x+10,_y+20); 
+            glVertex2i(_x,_y-10); 
+            glVertex2i(_x-10,_y+20);
+            glVertex2i(_x+10,_y+20); 
         glEnd();
 
          glColor3f(0.145f, 0.301f, 0.203f);
         glBegin(GL_POLYGON);
-        glVertex2i(_x,_y+20);
-        glVertex2i(_x-5,_y+30); 
-        glVertex2i(_x-7.5,_y+25);
-        glVertex2i(_x-5,_y+35); 
+            glVertex2i(_x,_y+20);
+            glVertex2i(_x-5,_y+30); 
+            glVertex2i(_x-7.5,_y+25);
+            glVertex2i(_x-5,_y+35); 
         glEnd();
 
         glBegin(GL_POLYGON);
-        glVertex2i(_x,_y+20);
-        glVertex2i(_x+5,_y+30); 
-        glVertex2i(_x+7.5,_y+25);
-        glVertex2i(_x+5,_y+35); 
+            glVertex2i(_x,_y+20);
+            glVertex2i(_x+5,_y+30); 
+            glVertex2i(_x+7.5,_y+25);
+            glVertex2i(_x+5,_y+35); 
         glEnd();
     break;
 
@@ -906,14 +914,14 @@ void initializeMenu()
     glutAddMenuEntry("CARROT",CARROT);
     glutAddMenuEntry("BLUEBERRY",BLUEBERRY);
     glutAddMenuEntry("ONION",ONION);
-
+/*
     mainMenuId = glutCreateMenu(travelMenuCallBack);
     glutAddMenuEntry("Market", MARKET);
-    glutAddMenuEntry("Field", FIELD);
+    glutAddMenuEntry("Field", FIELD);*/
 
     actionSubMenuId = glutCreateMenu(nullptr);
     glutAddSubMenu("Action", gotoSubMenuId);
-    glutAddSubMenu("Goto", mainMenuId);
+  //  glutAddSubMenu("Goto", mainMenuId);
     glutAddSubMenu("Plants",plantSelectMenuId);
     
 
@@ -937,25 +945,25 @@ if(noHarvestedCrops > 15)
 
 
 glBegin(GL_POLYGON);
-glColor3f(0.434f, 0.204f, 0.09f);
-glVertex2i(x+0,y+50);
-glVertex2i(x+150,y+50);
-glVertex2i(x+150,y-20);
-glVertex2i(x+0,y-20);
+    glColor3f(0.434f, 0.204f, 0.09f);
+    glVertex2i(x+0,y+50);
+    glVertex2i(x+150,y+50);
+    glVertex2i(x+150,y-20);
+    glVertex2i(x+0,y-20);
 glEnd();
 glBegin(GL_POLYGON);
-glColor3f(0.434f, 0.204f, 0.09f);
-glVertex2i(x+0,y+0);
-glVertex2i(x+0,y+50);
-glVertex2i(x+150,y+50);
-glVertex2i(x+150,y+0);
+    glColor3f(0.434f, 0.204f, 0.09f);
+    glVertex2i(x+0,y+0);
+    glVertex2i(x+0,y+50);
+    glVertex2i(x+150,y+50);
+    glVertex2i(x+150,y+0);
 glEnd();
 glColor3f(0.235f, 0.110f, 0.047f);
 glBegin(GL_POLYGON);
-glVertex2i(x+10,y+5);
-glVertex2i(x+10,y+45);
-glVertex2i(x+140,y+45);
-glVertex2i(x+140,y+5);
+    glVertex2i(x+10,y+5);
+    glVertex2i(x+10,y+45);
+    glVertex2i(x+140,y+45);
+    glVertex2i(x+140,y+5);
 glEnd();
 drawCircle(x+10,y-20,20,8);
 drawCircle(x+140,y-20,20,8);
@@ -987,10 +995,7 @@ for(int i = 0; harvestedCrops[i] != '\0';i++ )
 
      temp = i%inARow;
     drawCircle(x+20+(temp*gap),y+12+((int)(i/inARow))*gap,10,8);
-   /* glBegin(GL_POINTS);
-   
-    glVertex2i(x+16+(temp*8),y+9+((int)(i/20))*8);
-    glEnd();*/
+
 
 }
 
@@ -1038,45 +1043,45 @@ void drawFieldSurroundings()
 
     glColor3f(0.066f, 0.329f, 0.082f);
     glBegin(GL_POLYGON);
-    glVertex2i(0,750);
-    glVertex2i(0,850);
-    glVertex2i(2000,950);
-    glVertex2i(2000,750);
+        glVertex2i(0,750);
+        glVertex2i(0,850);
+        glVertex2i(2000,950);
+        glVertex2i(2000,750);
     glEnd();
     glBegin(GL_POLYGON);
-    glVertex2i(40,0);
-    glVertex2i(40,850);
-    glVertex2i(0,850);
-    glVertex2i(0,0);
+        glVertex2i(40,0);
+        glVertex2i(40,850);
+        glVertex2i(0,850);
+        glVertex2i(0,0);
     glEnd();
     glBegin(GL_POLYGON);
-    glVertex2i(0,0);
-    glVertex2i(0,40);
-    glVertex2i(2000,40);
-    glVertex2i(2000,0);
+        glVertex2i(0,0);
+        glVertex2i(0,40);
+        glVertex2i(2000,40);
+        glVertex2i(2000,0);
     glEnd();
     glColor3f(0.463f, 0.208f, 0.024f);
     glLineWidth(10.0f);
     glColor3f(0.611f, 0.275f, 0.027f);
     glBegin(GL_LINE_STRIP);
-    glVertex2i(750,300);
-    glVertex2i(750,75);
-    glVertex2i(1400,75);
-    glVertex2i(1400,680);
-    glVertex2i(750,680);
-    glVertex2i(750,430);
+        glVertex2i(750,300);
+        glVertex2i(750,75);
+        glVertex2i(1400,75);
+        glVertex2i(1400,680);
+        glVertex2i(750,680);
+        glVertex2i(750,430);
     glEnd();
     glLineWidth(15.0f);
     glColor3f(0.463f, 0.208f, 0.024f);
     glLineStipple(10,3);
     glEnable(GL_LINE_STIPPLE);
     glBegin(GL_LINE_STRIP);
-    glVertex2i(750,300);
-    glVertex2i(750,75);
-    glVertex2i(1400,75);
-    glVertex2i(1400,680);
-    glVertex2i(750,680);
-    glVertex2i(750,430);
+        glVertex2i(750,300);
+        glVertex2i(750,75);
+        glVertex2i(1400,75);
+        glVertex2i(1400,680);
+        glVertex2i(750,680);
+        glVertex2i(750,430);
     glEnd();
     glutPostRedisplay();
 }
@@ -1091,47 +1096,6 @@ void writeText(int x, int y, char* string)
 
 }
 
-void certPage()
-{
-   // glClearColor(0,0,0,1);
-    glColor3f(0.0f,0.0f,0.0f);
-    glBegin(GL_POLYGON);
-        glVertex2i(0,0);
-        glVertex2i(0,900);
-        glVertex2i(1800,900);
-        glVertex2i(1800,0);
-    glEnd();
-
-	glColor3f(1.0, 0.0, 0.0);
-	writeText(450, 700, "SAHYADRI COLLEGE OF ENGINEERING AND MANAGEMENT");
-	glColor3f(1.0, 1.0, 1.0);
-	writeText(450, 650, "DEPARTMENT OF COMPUTER SCIENCE AND ENGINEERING");
-	glColor3f(0.0, 0.0, 1.0);
-	writeText(680, 550, "A MINI PROJECT ON ");
-	glColor3f(1.0, 0.0, 1.0);
-	writeText(668, 520,"Farming Simulator Game");
-   	glColor3f(1.0, 0.7, 0.8);
-	writeText(755, 450, "Created By");
-	glColor3f(1.0, 1.0, 1.0);
-    writeText(765, 400,"Anish U");
-    glColor3f(1.0, 1.0, 1.0);
-    writeText(738, 375, "4SF20CS014");
-
-    glColor3f(1.0, 0.0, 0.0);
-    writeText(690, 300,"Under the Guidance of");
-    glColor3f(1.0, 1.0, 1.0);
-    writeText(730, 270, "Ms Megha Rani");
-    glColor3f(1.0, 1.0, 1.0);   
-    writeText(710, 240, "Assistant Professor");
-    glColor3f(1.0, 0.0, 0.0);
-    writeText(730, 180, "Academic Year");
-    glColor3f(1.0, 1.0, 1.0);
-    writeText(755, 155, "2022-2023");
-    glColor3f(1.0, 1.0, 1.0);
-    writeText(650, 75, "Press ENTER to start the game");
-
-
-}
 
 void drawInventory()
 {
@@ -1165,6 +1129,36 @@ void drawInventory()
 
 }
 
+void drawInstructions()
+{
+    if(!isInstructionsOpen)
+        return;
+
+    glColor3f(0.0f,0.0f,0.0f);
+        glBegin(GL_POLYGON);
+        glVertex2i(450,200);
+        glVertex2i(1150,200);
+        glVertex2i(1150,600);
+        glVertex2i(450,600);
+    glEnd();
+    char temp[100];
+    glColor3f(1,1,1);
+    writeText(750,570,"Instructions");
+    writeText(650,520,"Welcome to farming simulator !");
+    writeText(530,470,"'RIGHT CLICK' to open the actions and crops menu. ");
+    writeText(520,430,"'LEFT CLICK' on a field to perform the selected action ");
+    writeText(630,390,"Press 'I' to open the inventory");
+    writeText(710,350,"Press 'Q' to quit");
+    writeText(650,230,"Press 'H' to close this panel");
+       
+
+
+
+
+}
+
+
+
 void display() {
 
     switch (CURRENT_LOCATION)
@@ -1173,22 +1167,19 @@ void display() {
             glClear(GL_COLOR_BUFFER_BIT);
             drawFieldSurroundings();
             glDisable(GL_LINE_STIPPLE);
-
             for(int i = 0; i<FIELDS_COUNT; i++)
             {
                 ACTIVE_FIELDS[i].drawSelf();
             }
-
             drawHouse();
             drawTool(45,700);
             drawCart(570,100);
  
             drawInventory();
+            drawInstructions();
         break;
 
-        case CERTIFICATE_PAGE:
-            certPage();
-        break;
+      
     }
 
     
@@ -1208,7 +1199,6 @@ void mouse(int button, int state, int x, int y) {
         {
             ACTIVE_FIELDS[i].onClick(mouseX,mouseY);
         }
-
         glutPostRedisplay();
     }
 }
@@ -1232,12 +1222,12 @@ void handleKeyPress(unsigned char key, int x, int y) {
             isInventoryOpen = !isInventoryOpen;
             glutPostRedisplay();
             break;
-        case 13:
-            if(CURRENT_LOCATION == CERTIFICATE_PAGE)
-            CURRENT_LOCATION = FIELD;
+
+        case 'h':
+            isInstructionsOpen = !isInstructionsOpen;
             glutPostRedisplay();
-            glClear(GL_COLOR_BUFFER_BIT);
             break;
+           
     }
 }
 
@@ -1249,7 +1239,6 @@ void initializeGlut()
     gluOrtho2D(0,1600,0,800);
     glClearColor(0.254f, 0.547f, 0.066f,0.0f);
     glutFullScreen();
-
 }
 
 void initializeFuncs()

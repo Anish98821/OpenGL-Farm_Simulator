@@ -14,9 +14,11 @@ Run the below command on CMD / PowerShell with the current directory set as the 
 mingw32-make
 ```
 ## Preview
-![image](https://github.com/Anish98821/OpenGL-Farm_Simulator/assets/34644876/246401fe-62d1-48a1-bca0-e52b0cb7b13d)
+![image](https://github.com/Anish98821/OpenGL-Farm_Simulator/assets/34644876/95f190aa-de50-460f-8f1c-9859f08f2536)
 
-![image](https://github.com/Anish98821/OpenGL-Farm_Simulator/assets/34644876/b9eb98e3-21df-43b4-ae3a-ce3a87156f28)
+
+![image](https://github.com/Anish98821/OpenGL-Farm_Simulator/assets/34644876/14e6b05f-ee74-4453-8ade-b8ac9477c4db)
+
 
 
 
